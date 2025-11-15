@@ -16,13 +16,177 @@ st.set_page_config(
 # ---------------- CSS Styling ----------------
 st.markdown("""
 <style>
-.main { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-.stApp { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.main {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+.stApp {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
 
-/* Add your previous CSS styling here */
+/* Hide default file uploader style */
+section[data-testid="stFileUploader"] {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+section[data-testid="stFileUploader"] > div {
+    background: transparent !important;
+    border: none !important;
+}
+
+div[data-testid="stFileUploadDropzone"] {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 2px dashed rgba(255, 255, 255, 0.5) !important;
+    border-radius: 15px !important;
+    backdrop-filter: blur(10px);
+}
+
+div[data-testid="stFileUploadDropzone"]:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+h1 {
+    color: white !important;
+    text-align: center;
+    font-size: 3.5em !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    margin-bottom: 10px !important;
+}
+.subtitle {
+    color: white;
+    text-align: center;
+    font-size: 1.3em;
+    margin-bottom: 20px;
+    opacity: 0.9;
+}
+
+/* Upload Card */
+.upload-card {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 20px !important;
+    text-align: center;
+    box-shadow: none !important;
+    margin: 10px 0 !important;
+}
+.upload-title {
+    color: white;
+    font-size: 1.8em;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Result Card */
+.result-main-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 30px;
+    padding: 50px;
+    text-align: center;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+    margin: 30px 0;
+    transform: scale(1);
+    transition: transform 0.3s;
+}
+.result-main-card:hover {
+    transform: scale(1.02);
+}
+.emotion-display {
+    font-size: 8em;
+    margin: 20px 0;
+    animation: bounce 1s ease;
+}
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+.emotion-text {
+    color: white;
+    font-size: 4em;
+    font-weight: bold;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+    margin: 20px 0;
+    letter-spacing: 3px;
+}
+.confidence-text {
+    color: white;
+    font-size: 2em;
+    font-weight: 500;
+    margin-top: 10px;
+    opacity: 0.95;
+}
+
+/* Metrics Cards */
+.metric-container {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.metric-title {
+    color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Chart Container */
+.chart-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 25px;
+    padding: 30px;
+    margin: 30px 0;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+.stButton>button {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 20px 60px;
+    font-size: 1.3em;
+    font-weight: bold;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    transition: all 0.3s;
+    width: 100%;
+    margin-top: 20px;
+}
+.stButton>button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+}
+
+/* Audio player styling */
+audio {
+    width: 100%;
+    margin: 20px 0;
+    border-radius: 15px;
+}
+
+div[data-testid="stMetricValue"] {
+    font-size: 1.8em;
+    color: white;
+    font-weight: bold;
+}
+div[data-testid="stMetricLabel"] {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1em;
+}
+div[data-testid="stMetricDelta"] {
+    color: rgba(255, 255, 255, 0.8);
+}
 </style>
 """, unsafe_allow_html=True)
-
 # ---------------- Emotion Mappings ----------------
 emotion_emojis = {
     'angry': '😠', 'disgust': '🤢', 'fear': '😨', 'happy': '😄',
@@ -121,3 +285,4 @@ if uploaded_file is not None:
             # Display results
             st.success(f"✅ Detected Emotion: {predicted_emotion.upper()} ({confidence:.2f}%)")
             st.plotly_chart(create_confidence_chart(prediction, emotion_labels), use_container_width=True)
+
